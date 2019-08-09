@@ -76,7 +76,7 @@ clock_t engineWait(clock_t last_tick_time_wait, double desired_tick_rate_wait)
 	current_time = clock();
 	} while ((((double) current_time - last_tick_time_wait) / CLOCKS_PER_SEC) <= desired_tick_rate_wait);
 	
-	return current_time_wait;
+	return current_time;
 }
 
 void engineLoop(int target_ticks)
@@ -117,14 +117,8 @@ void engineLoop(int target_ticks)
 
 int main()
 {
-	if (engineLoop(600))
-	{
-		printf("Success!\n");
-		return 0;
-	}
-	
-	printf("Failure!\n");
-	return 1;
+	engineLoop(600);
+	return 0;
 }
 
 
