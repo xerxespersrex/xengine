@@ -3,6 +3,19 @@
 #include <stdio.h>
 #include <time.h>
 
+//render the state to a frame in the frame buffer
+void renderFrame(uint32_t frame_buffer[640][480])
+{
+	return;
+}
+
+//apply hud or menus on top of frame
+void applyHAM(uint32_t frame_buffer[640][480])
+{
+	return;
+}
+
+//draw the frame buffer to the screen
 void draw(uint32_t frame_buffer[640][480])
 {
 	printf("Dummy draw! ");
@@ -10,11 +23,13 @@ void draw(uint32_t frame_buffer[640][480])
 }
 
 /*
+
 //get what buttons are being pressed
 int currentInput()
 {
 	return 0;
 }
+
 */
 
 //draw graphics based on state
@@ -24,8 +39,13 @@ void engineGraphics(/*state*/)
 	
 	//state obviously not done, but...
 	
-	//create frame from state and then display that frame asap
+	//create frame from state
+	renderFrame(frame_buffer);
 	
+	//apply hud and menus to the frame
+	applyHAM(frame_buffer);
+	
+	//draw the frame to the screen
 	draw(frame_buffer);
 	
 	return;
@@ -50,16 +70,16 @@ void engineTick(/*state*/)
 //wait for next tick
 clock_t engineWait(clock_t last_tick_time_wait, double desired_tick_rate_wait)
 {
-	clock_t current_time_wait;
+	clock_t current_time;
 	
 	do {
-	current_time_wait = clock();
-	} while ((((double) current_time_wait - last_tick_time_wait) / CLOCKS_PER_SEC) <= desired_tick_rate_wait);
+	current_time = clock();
+	} while ((((double) current_time - last_tick_time_wait) / CLOCKS_PER_SEC) <= desired_tick_rate_wait);
 	
 	return current_time_wait;
 }
 
-bool engineLoop(int target_ticks)
+void engineLoop(int target_ticks)
 {
 	//uint8_t state[500000000] = {0}; //500 megabytes memory reserved
 	clock_t last_tick_time;
@@ -86,13 +106,13 @@ bool engineLoop(int target_ticks)
 		
 		if (tick_counter == target_ticks)
 		{
-			break;
+			return;
 		}
 		
 		last_tick_time = engineWait(last_tick_time, desired_tick_rate);
 	}
 	
-	return true;
+	return;
 }
 
 int main()
@@ -153,17 +173,14 @@ int main()
  * regardless of framerate, tick calculations can always use 1/60th of a
  * second for physics and other state changes and maybe there can be
  * some sort of rubberbanding in case the tickrate is too fast/slow
+ * 
+ * three dimensional map data loaded from a map file into storage, might
+ * be easier to just load it into a separate 3d array (variable size?)
+ * 
+ * then either a profile for the player's collision/physics or hardcoded
+ * numbers for interaction with map as player
+ * 
+ * should use desired-tickrate and desired-framerate constants
+ * throughout the engine so that the engine isn't locked to a certain
+ * fps or tickrate
  */
-
-
-
-
-
-
-
-
-
-
-
-
-
