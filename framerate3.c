@@ -54,15 +54,12 @@ void engineGraphics(double frame_rate)
 //lurch forward state to next tick
 void engineTick(double tick_rate)
 {
-	//get input first, to be as close to draw as possible
+	//get input first and use it immediately to remove a frame of input
+	//lag
 	//int tick_input = currentInput();
 	
 	//crunch change in entire state from last tick based on physics and
 	//input
-	
-	//take into account input now, or use input from last tick for this
-	//tick? former separates input from state and is 1/60th of a second
-	//faster so why not try that first
 	
 	return;
 }
@@ -80,25 +77,34 @@ void engineLoop(int target_ticks)
 	int tick_counter = 0;
 	int frame_counter = 0;
 	
+	bool skip_frame = false;
+	int frame_skip_counter = 0;
+	int max_skipped_frames = 60;
+	
 	last_tick_time = clock();
 	last_frame_time = clock();
 	
 	//draw->tick->wait->draw
 	for (;;)
 	{
-		current_time = clock();
-		
-		if ((((double) current_time - last_tick_time) / CLOCKS_PER_SEC) >= desired_tick_rate)
+		if ((((current_time = clock()) - (double) last_tick_time) / CLOCKS_PER_SEC) >= desired_tick_rate)
 		{
+			if ((((double) current_time - last_tick_time) / CLOCKS_PER_SEC) >= (2 * desired_tick_rate))
+			{
+				skip_frame = true;
+			}
 			last_tick_time = clock();
 			engineTick(desired_tick_rate);
 			++tick_counter;
 			printf("Tick: %d\n", tick_counter);
 		}
 		
-		current_time = clock(); //is this necessary?
+		if (skip_frame == true && frame_skip_counter < max_skipped_frames)
+		{
+			++frame_skip_counter;
+		}
 		
-		if ((((double) current_time - last_frame_time) / CLOCKS_PER_SEC) >= desired_frame_rate)
+		else if ((((current_time = clock()) - (double) last_frame_time) / CLOCKS_PER_SEC) >= desired_frame_rate)
 		{
 			last_frame_time = clock();
 			engineGraphics(desired_frame_rate);
