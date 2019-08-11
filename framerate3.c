@@ -71,8 +71,10 @@ void engineLoop(int target_ticks)
 	clock_t last_frame_time;
 	clock_t current_time;
 	
-	double desired_tick_rate = ((double) 1 / 60);
-	double desired_frame_rate = ((double) 1 / 60);
+	double desired_tick_rate = 60;
+	double desired_frame_rate = 60;
+	desired_tick_rate = (1 / desired_tick_rate);
+	desired_frame_rate = (1 / desired_frame_rate);
 	
 	int tick_counter = 0;
 	int frame_counter = 0;
@@ -93,8 +95,10 @@ void engineLoop(int target_ticks)
 			{
 				skip_frame = true;
 			}
+			
 			last_tick_time = clock();
 			engineTick(desired_tick_rate);
+			
 			++tick_counter;
 			printf("Tick: %d\n", tick_counter);
 		}
@@ -109,7 +113,9 @@ void engineLoop(int target_ticks)
 		{
 			last_frame_time = clock();
 			engineGraphics(desired_frame_rate);
+			
 			++frame_counter;
+			frame_skip_counter = 0;
 			printf("Frame: %d", frame_counter);
 			if (frame_counter % 60 == 0)
 			{
