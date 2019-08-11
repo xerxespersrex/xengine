@@ -102,6 +102,7 @@ void engineLoop(int target_ticks)
 		if (skip_frame == true && frame_skip_counter < max_skipped_frames)
 		{
 			++frame_skip_counter;
+			skip_frame = false;
 		}
 		
 		else if ((((current_time = clock()) - (double) last_frame_time) / CLOCKS_PER_SEC) >= desired_frame_rate)
