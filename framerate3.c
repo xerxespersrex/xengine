@@ -54,8 +54,7 @@ void engineGraphics(double frame_rate)
 //lurch forward state to next tick
 void engineTick(double tick_rate)
 {
-	//get input first and use it immediately to remove a frame of input
-	//lag
+	//using input immediately might be too fast, not sure yet
 	//int tick_input = currentInput();
 	
 	//crunch change in entire state from last tick based on physics and
@@ -71,10 +70,33 @@ void engineLoop(int target_ticks)
 	clock_t last_frame_time;
 	clock_t current_time;
 	
-	double desired_tick_rate = 60;
-	double desired_frame_rate = 60;
-	desired_tick_rate = (1 / desired_tick_rate);
-	desired_frame_rate = (1 / desired_frame_rate);
+	//desired ticks per second. 0 means uncapped.
+	//if tick rate is used for physics calcs, cannot be uncapped unless
+	//there's a separate calculation that takes into account clock()
+	//for calculations, as the engine is supposed to do physics calcs
+	//like gravity in time chunks related to the tick rate
+	double desired_tick_rate = 0;
+	
+	//desired frames per second. 0 means uncapped.
+	double desired_frame_rate = 0;
+	
+	if (desired_tick_rate > 0)
+	{
+		desired_tick_rate = (1 / desired_tick_rate);
+	}
+	else
+	{
+		desired_tick_rate = 0;
+	}
+	
+	if (desired_frame_rate > 0)
+	{
+		desired_frame_rate = (1 / desired_frame_rate);
+	}
+	else
+	{
+		desired_frame_rate = 0;
+	}
 	
 	int tick_counter = 0;
 	int frame_counter = 0;
@@ -91,7 +113,7 @@ void engineLoop(int target_ticks)
 	{
 		if ((((current_time = clock()) - (double) last_tick_time) / CLOCKS_PER_SEC) >= desired_tick_rate)
 		{
-			if ((((double) current_time - last_tick_time) / CLOCKS_PER_SEC) >= (2 * desired_tick_rate))
+			if ((desired_tick_rate != 0) && ((((double) current_time - last_tick_time) / CLOCKS_PER_SEC) >= (2 * desired_tick_rate)))
 			{
 				skip_frame = true;
 			}
